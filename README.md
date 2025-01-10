@@ -1,71 +1,128 @@
-# Getting Started with Create React App
+# Collaborative Whiteboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A real-time collaborative whiteboard application where users can draw, change colors, adjust line thickness, and collaborate with others in real-time.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Draw on a shared canvas with multiple users in real-time.
+- Select different colors for drawing.
+- Adjust line thickness (Thicker/Thinner).
+- Automatically resizes the canvas to fit the browser window.
+- Collaborative experience powered by WebSockets (Socket.IO).
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Getting Started
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Prerequisites
 
-### `npm test`
+Make sure you have the following installed on your system:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [Node.js](https://nodejs.org/) (v14 or later)
+- npm (comes with Node.js)
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Clone the repository:**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   git clone <REPOSITORY_URL>
+   cd collaborative-whiteboard
+   ```
 
-### `npm run eject`
+2. **Install frontend dependencies:**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   ```bash
+   npm install
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. **Set up the backend server:**
+   Create a new folder named `server` and add a simple backend:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   - Navigate to the `server` folder:
+     ```bash
+     mkdir server && cd server
+     ```
+   - Initialize the backend:
+     ```bash
+     npm init -y
+     npm install express socket.io cors
+     ```
+   - Create `server.js`:
+     ```javascript
+     const express = require('express');
+     const http = require('http');
+     const { Server } = require('socket.io');
+     const cors = require('cors');
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+     const app = express();
+     const server = http.createServer(app);
+     const io = new Server(server, {
+       cors: {
+         origin: '*',
+         methods: ['GET', 'POST'],
+       },
+     });
 
-## Learn More
+     app.use(cors());
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+     io.on('connection', (socket) => {
+       console.log('User connected:', socket.id);
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+       socket.on('draw', (data) => {
+         socket.broadcast.emit('draw', data);
+       });
 
-### Code Splitting
+       socket.on('disconnect', () => {
+         console.log('User disconnected:', socket.id);
+       });
+     });
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+     const PORT = 4000;
+     server.listen(PORT, () => {
+       console.log(`Server is running on http://localhost:${PORT}`);
+     });
+     ```
 
-### Analyzing the Bundle Size
+4. **Run the backend server:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+   ```bash
+   node server.js
+   ```
 
-### Making a Progressive Web App
+5. **Run the frontend application:**
+   Open a new terminal window, navigate back to the root directory, and run:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+   ```bash
+   npm start
+   ```
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Usage
 
-### Deployment
+- Open the application in your browser at `http://localhost:3000`.
+- Draw on the canvas using your mouse.
+- Adjust color and line thickness using the controls.
+- Open the application in another browser or device to collaborate in real-time.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# collaborative-whiteboard
+### Deploying Frontend
+
+- Use services like [Netlify](https://www.netlify.com/) or [Vercel](https://vercel.com/).
+
+### Deploying Backend
+
+- Deploy the backend to a cloud service like [Heroku](https://www.heroku.com/) or [Render](https://render.com/).
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
