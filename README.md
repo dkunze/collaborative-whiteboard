@@ -28,7 +28,7 @@ Make sure you have the following installed on your system:
 1. **Clone the repository:**
 
    ```bash
-   git clone <REPOSITORY_URL>
+   git clone <https://github.com/dkunze/collaborative-whiteboard>
    cd collaborative-whiteboard
    ```
 
